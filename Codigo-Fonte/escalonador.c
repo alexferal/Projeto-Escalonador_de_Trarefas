@@ -70,9 +70,6 @@ void ordenarFila(Fila *inicio, Tarefa *nova){
 	}
 }
 
-void i(Tarefa *n){
-	printf("\nTarefa: %d, Duracao: %d, Prioridade: %d", n->tarefa, n->duracao, n->prioridade);
-}
 
 void preencherFila(Fila *inicio, int mat[TAM][TAM], int vet[TEMPO]){
 	int t, pos=0, k=0;
@@ -96,7 +93,6 @@ void preencherFila(Fila *inicio, int mat[TAM][TAM], int vet[TEMPO]){
 	duracao = nova1->duracao + mat[1][k];
 				
 	ordenarFila(inicio,nova1);
-	i(nova1);
 	k++;
 	
 	for(t=duracao; t<TEMPO; t+= duracao){
@@ -122,10 +118,7 @@ void preencherFila(Fila *inicio, int mat[TAM][TAM], int vet[TEMPO]){
 				
 			duracao = nova->duracao;
 				
-			printf("ok");
 			ordenarFila(inicio,nova);
-			printf("ok");
-			i(nova);
 			k++;
 		}
 		if(inicio->p != NULL){
