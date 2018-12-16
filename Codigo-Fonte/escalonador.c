@@ -51,32 +51,67 @@ void ordenarFila(Fila *inicio, Tarefa *nova){
 		inicio->p = nova;
 	}
 	
-		else{
-			Tarefa *aux = inicio->p;
-			aux = encontraProxima(inicio);
-		
-			while(aux->prox != NULL && aux->prioridade > nova->prioridade){  
-			 	aux = aux->prox;
-			}
-			if(aux->prioridade<nova->prioridade){
-		 		nova->ant = aux->ant;
-		 		aux->ant->prox = nova;
-		 		aux->ant = nova;
-		 		nova->prox = aux;
-		 	}else{
-		 		aux->prox = nova;
-		 		nova->ant = aux;
-		 	}
+	else{
+		Tarefa *aux = inicio->p;
+		aux = encontraProxima(inicio);
+	
+		while(aux->prox != NULL && aux->prioridade > nova->prioridade){  
+		 	aux = aux->prox;
 		}
+		if(aux->prioridade<nova->prioridade && aux->status == PRONTA){
+	 		nova->ant = aux->ant;
+	 		aux->ant->prox = nova;
+	 		aux->ant = nova;
+	 		nova->prox = aux;
+	 	}else{
+	 		aux->prox = nova;
+	 		nova->ant = aux;
+	 	}
 	}
+}
+
+void i(Tarefa *n){
+	printf("\nTarefa: %d, Duracao: %d, Prioridade: %d", n->tarefa, n->duracao, n->prioridade);
+}
 
 void preencherFila(Fila *inicio, int mat[TAM][TAM], int vet[TEMPO]){
 	int t, pos=0, k=0;
 	int duracao=0;
 	
+	if(mat[1][0] > 0){
+		int m;
+		for(m=0; m<mat[1][0]; m++){
+			vet[m]=0;
+		}
+		pos+=mat[1][0];
+	}
+	Tarefa *nova1 = (Tarefa*) malloc(sizeof(Tarefa));
+	nova1->tarefa = mat[0][k];
+	nova1->duracao = mat[2][k];
+	nova1->prioridade = mat[3][k];
+	nova1->status = PRONTA;
+	nova1->prox = NULL;
+	nova1->ant = NULL;
+				
+	duracao = nova1->duracao + mat[1][k];
+				
+	ordenarFila(inicio,nova1);
+	i(nova1);
+	k++;
 	
-	for(t=0; t<TEMPO; t+=duracao){
+	for(t=duracao; t<TEMPO; t+= duracao){
+		
 		while(mat[1][k]<=t && k<TAM){
+			if(mat[1][k-1] < mat[1][k]){
+				Tarefa *aux = encontraProxima(inicio); 
+				int n;
+				for(n=pos; n<(aux->duracao+pos); n++){
+					vet[n] = aux->tarefa;
+				}
+				aux->status = TERMINADA;
+			
+				pos+=aux->duracao;
+			}
 			Tarefa *nova = (Tarefa*) malloc(sizeof(Tarefa));
 			nova->tarefa = mat[0][k];
 			nova->duracao = mat[2][k];
@@ -87,7 +122,10 @@ void preencherFila(Fila *inicio, int mat[TAM][TAM], int vet[TEMPO]){
 				
 			duracao = nova->duracao;
 				
+			printf("ok");
 			ordenarFila(inicio,nova);
+			printf("ok");
+			i(nova);
 			k++;
 		}
 		if(inicio->p != NULL){
@@ -129,7 +167,7 @@ void lerDados (int mat[TAM][TAM]){
 }
 
 int calcularDuracao(int mat[TAM][TAM]){
-	int k,contDuracao = mat[2][0];
+	int k,contDuracao = mat[2][0]+mat[1][0];
 	
 	for(k=1; k<TAM; k++)
 		contDuracao += mat[2][k];
